@@ -27,7 +27,7 @@ class Model:
         self.popt = None
         self.pcov = None
 
-    def fit(self, model, p0=None, order=1):
+    def fitmodel(self, model, p0=None, order=1):
         '''
             Fit a function to the data.
             mode: 'poly' if polyonmial, otherwise a function
@@ -143,7 +143,7 @@ class Model:
 def help():
     print('add documentation, the class is \'Model\'')
 
-if False:
+'''if __name__ == '__main__':
     x = np.linspace(0, 10, 100)
     y = 2 + 5 * x + np.random.normal(0, 0.1, len(x))
     def fit(x, m, b):
@@ -152,4 +152,4 @@ if False:
 
     model = Model(x, y, erry=yerr)
     model.fit('poly', order=1)
-    model.plot(errorbars=True)
+    model.plot(errorbars=True)'''
