@@ -4,11 +4,13 @@ from scipy.stats import chisquare, chi2
 import matplotlib.pyplot as plt
 
 class Model:
-    def __init__(self, x, y, errx=None, erry=None):
+    def __init__(self, x, y, errx=None, erry=None, verbose=True):
         '''
             Initialize the model with the data.
             x: array of x values
             y: array of y values
+            errx: array of x errors
+            erry: array of y errors
         '''
         self.x = np.array(x, dtype=float)
         self.y = np.array(y, dtype=float)
@@ -22,6 +24,7 @@ class Model:
             self.erry.fill(np.finfo(float).eps)
         else:
             self.erry = np.array(erry, dtype=float)
+        self.verbose = verbose
 
         self.model = None
         self.popt = None
@@ -75,11 +78,12 @@ class Model:
             raise ValueError('No fitted parameters')
         return np.sqrt(np.diag(self.pcov))
 
-    def chi2(self, manualmethod=True, verbose=False):
+    def chi2(self, manualmethod=True):
         '''
             Return the chi2 and p_value of the fit.
             tutorial: https://stattrek.com/chi-square-test/goodness-of-fit.aspx
             p_value chico es mejor
+            no pareciera funcar bien
         '''
         if self.model is None:
             raise ValueError('No fitted function')
@@ -93,7 +97,7 @@ class Model:
         else:
             chi_sqr, p_chi = chisquare(self.y, np.array(self.fitfunc(self.x)), len(self.y) - 1 - len(self.popt))
         
-        if verbose:
+        if self.verbose:
             print('chi2:', chi_sqr)
             print('p_chi:', p_chi)
             if p_chi < 0.05:
@@ -115,7 +119,7 @@ class Model:
             return np.array(self.model(x, *self.popt))
         return self.model(x, *self.popt)
 
-    def plot(self, errorbars=False, show_fit=True, show=True):
+    def plot(self, errorbars=False, show_fit=True, show=True, xscale=None, yscale=None):
         '''
             Plot the data and the fitted function.
         '''
@@ -135,21 +139,15 @@ class Model:
         else:
             plt.scatter(self.x, self.y, label='data')
         if show_fit:
-            plt.plot(self.x, self.fitfunc(self.x), label='fit')
+            plt.plot(self.x, self.fitfunc(self.x), label='fit', color='tab:orange')
+        if xscale is not None:
+            plt.xscale(xscale)
+        if yscale is not None:
+            plt.yscale(yscale)
         plt.legend()
         if show:
             plt.show()
 
-def help():
-    print('add documentation, the class is \'Model\'')
-
-'''if __name__ == '__main__':
-    x = np.linspace(0, 10, 100)
-    y = 2 + 5 * x + np.random.normal(0, 0.1, len(x))
-    def fit(x, m, b):
-        return m * x + b
-    yerr = np.array([0.1 for _ in range(len(y))])
-
-    model = Model(x, y, erry=yerr)
-    model.fit('poly', order=1)
-    model.plot(errorbars=True)'''
+    @staticmethod
+    def help():
+        print('add documentation, the class is \'Model\'')
