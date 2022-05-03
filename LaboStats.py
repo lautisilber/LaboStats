@@ -143,7 +143,7 @@ class Model:
 def help():
     print('add documentation, the class is \'Model\'')
 
-if __name__ == '__main__':
+if False:
     x = np.linspace(0, 10, 100)
     y = 2 + 5 * x + np.random.normal(0, 0.1, len(x))
     def fit(x, m, b):
