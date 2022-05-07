@@ -30,7 +30,7 @@ class Model:
         self.popt = None
         self.pcov = None
 
-    def fitmodel(self, model, p0=None, order=1):
+    def fitmodel(self, model, p0=None, order=1, b0=False):
         '''
             Fit a function to the data.
             mode: 'poly' if polyonmial, otherwise a function
@@ -39,13 +39,13 @@ class Model:
             returns: fitted parameters, pcov
         '''
         if model == 'poly':
-            self._polyfit(order)
+            self.poly_fit(order, b0)
         else:
-            self._curve_fit(model, p0)
+            self.curve_fit(model, p0)
         return self.popt, self.pcov
 
 
-    def _curve_fit(self, func, p0=None):
+    def curve_fit(self, func, p0=None):
         '''
             Fit a function to the data.
             func: function to fit
@@ -56,16 +56,16 @@ class Model:
         self.popt, self.pcov = curve_fit(func, self.x, self.y, p0)
         return self.popt, self.pcov
 
-    def _polyfit(self, order):
+    def poly_fit(self, order, b0=False):
         '''
             Fit a polynomial of order 'order' to the data.
             Return the coefficients of the polynomial.
         '''
-        if order == 0:
-            self.model = lambda x, l: np.polyval([l, 0], x)
+        if b0 == True:
+            self.model = lambda x, l: np.polyval([*l, 0], x)
             self.popt, self.pcov = self.curve_fit(self.model)
         else:
-            self.model = lambda x, *p: np.polyval(p, x)
+            self.model = lambda x, p: np.polyval(*p, x)
             self.popt, self.pcov = np.polyfit(self.x, self.y, order, cov=True)
         return self.popt, self.pcov
 
